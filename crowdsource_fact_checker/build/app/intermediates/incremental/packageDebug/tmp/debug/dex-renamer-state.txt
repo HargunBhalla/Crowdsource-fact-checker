@@ -1,4 +1,10 @@
-#Sat Sep 18 12:02:32 EDT 2021
-base.0=/Users/mikhailszugalew/Documents/GitHub/Crowdsource-fact-checker/crowdsource_fact_checker/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+#Sun Sep 19 09:16:13 EDT 2021
+path.2=classes3.dex
+path.1=classes2.dex
 path.0=classes.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
 renamed.0=classes.dex
+base.2=/Users/mikhailszugalew/Documents/GitHub/Crowdsource-fact-checker/crowdsource_fact_checker/build/app/intermediates/dex/debug/mergeDexDebug/classes3.dex
+base.1=/Users/mikhailszugalew/Documents/GitHub/Crowdsource-fact-checker/crowdsource_fact_checker/build/app/intermediates/dex/debug/mergeDexDebug/classes2.dex
+base.0=/Users/mikhailszugalew/Documents/GitHub/Crowdsource-fact-checker/crowdsource_fact_checker/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex

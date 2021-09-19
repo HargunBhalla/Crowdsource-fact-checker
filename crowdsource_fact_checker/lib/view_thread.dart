@@ -1,3 +1,4 @@
+import 'package:crowdsource_fact_checker/write_a_comment.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,6 +15,15 @@ class ViewThreadPage extends StatefulWidget {
 
 class _ViewThreadPageState extends State<ViewThreadPage> {
 
+  Map<String, dynamic> post = {};
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      post = widget.post;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +132,7 @@ class _ViewThreadPageState extends State<ViewThreadPage> {
                   ),
                 child: Column(
                   children: [
-                    ...List.generate(widget.post["comments"] == null ? 0 : widget.post["comments"].length, (index) {
+                    ...List.generate(post["comments"] == null ? 0 : post["comments"].length, (index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -133,16 +143,16 @@ class _ViewThreadPageState extends State<ViewThreadPage> {
                                 CircleAvatar(
                                   radius: 12.0,
                                   backgroundImage:
-                                  NetworkImage(widget.post['comments'][index]['profilePicture']),
+                                  NetworkImage(post['comments'][index]['profilePicture']),
                                   backgroundColor: Colors.transparent,
                                 ),
                                 Container(width: 5,),
-                                Text(widget.post['comments'][index]['username'] ?? "username missing"),
+                                Text(post['comments'][index]['username'] ?? "username missing"),
                                 Spacer(),
                                 Icon(Icons.reply_rounded),
                                 Container(width: 5,),
                                 Icon(Icons.keyboard_arrow_up),
-                                Text(widget.post['comments'][index]['votes'] ?? "0"),
+                                Text(post['comments'][index]['votes'] ?? "0"),
                                 Icon(Icons.keyboard_arrow_down),
 
                               ],
@@ -150,7 +160,7 @@ class _ViewThreadPageState extends State<ViewThreadPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
-                            child: Text(widget.post['comments'][index]["comment"] ?? "Content missing", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                            child: Text(post['comments'][index]["comment"] ?? "Content missing", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
@@ -169,27 +179,18 @@ class _ViewThreadPageState extends State<ViewThreadPage> {
           ],
         ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print(widget.post['id']);
+        onPressed: () async {
+
+          post['comments'] = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WriteCommentPage(post: widget.post,)),
+          );
+          print(post['comments'].toString());
           setState(() {
-            if (widget.post['comments'] != null) {
-              var list = widget.post['comments'];
-              var realList = list.toList();
-              realList.add({
-                "username": UserConstants.username,
-                "profilePicture": UserConstants.profilePicture,
-                "comment": "hello"
-              });
-              widget.post['comments'] = realList;
-            } else {
-              widget.post['comments'] = [{
-                "username": UserConstants.username,
-                "profilePicture": UserConstants.profilePicture,
-                "comment": "hello"
-              }];
-            }
+            post = post;
+            widget.post['comments'] = post['comments'];
           });
-          FirebaseFirestore.instance.collection("posts").doc(widget.post['id']).update({"comments": widget.post['comments']});
+
         },
         tooltip: 'Comment',
         child: const Icon(Icons.comment_rounded),
