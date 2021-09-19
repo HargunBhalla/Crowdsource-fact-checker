@@ -33,13 +33,13 @@ class PostItem {
   PostItem.fromJson(Map<String, dynamic> json)
       : userName = json['userName'],
         comments = json['comments'],
-        truthRating = json['truthRating'],
+        truthRating = json['rating'],
         fact = json['fact'];
 
   Map<String, dynamic> toJson() => {
     'userName': userName,
     'comments': comments,
-    'truthRating': truthRating,
+    'rating': truthRating,
     'fact': fact,
   };
 }
@@ -47,22 +47,24 @@ class _HomePageState extends State<HomePage> {
 
   List<PostItem> posts = [];
 
-  _fetchListItems() async {
-    List<PostItem> postsTmp = [];
-    postsTmp.add(PostItem("bradley", "Fact", "10", "5"));
-    postsTmp.add(PostItem("bradley", "Fact", "10", "5"));
-    postsTmp.add(PostItem("bradley", "Fact", "10", "5"));
-    setState(() {
-      posts = postsTmp;
-    });
-    return posts;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Fact Checker"),
+        title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          /*Image.asset(
+            'assets/Crowdcheck_App_Icon.png',
+            fit: BoxFit.contain,
+            height: 32,
+          ),*/
+          Icon(Icons.check),
+          Container(
+              padding: const EdgeInsets.all(8.0), child: Text('crowdcheck'))
+        ],
+
+      ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(
@@ -93,8 +95,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ...snapshot.data!.docs.map((DocumentSnapshot document) {
                       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                      data['id'] = document.id.toString();
                       return PostTile(post: data);
                    }).toList(),
+                      Container(height: 100,)
                   ]
                   ),
                   );
@@ -109,7 +113,7 @@ class _HomePageState extends State<HomePage> {
           );
         },
         tooltip: 'New Fact',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.post_add_rounded),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
@@ -137,14 +141,14 @@ class PostTile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ViewThreadPage()),
+              MaterialPageRoute(builder: (context) => ViewThreadPage(post: post,)),
             );
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(8.0,8,16,8),
                 child: Row(
                   children: [
                     CircleAvatar(
@@ -156,13 +160,13 @@ class PostTile extends StatelessWidget {
                     Container(width: 5,),
                     Text(post['username'] ?? "username missing"),
                     Spacer(),
-                    Text(post['truthRating'] ?? "Not Answered"),
+                    Text(post['rating'] ?? "Not Answered"),
                     Container(width: 5,),
-                    (post['truthRating'] == null) ?
+                    (post['rating'] == null) ?
                       Icon(Icons.question_answer, color: Colors.grey,) :
-                      int.parse(post['truthRating']) < 7 ?
+                      int.parse(post['rating']) < 7 ?
                       Icon(Icons.close, color: Colors.red,) :
-                      int.parse(post['truthRating']) < 7 ?
+                      int.parse(post['rating']) < 7 ?
                       Icon(Icons.horizontal_rule_rounded, color: Colors.grey,) :
                       //Icon(Icons.done_outline_rounded, color: Colors.green,),
                       Icon(Icons.verified_outlined, color: Colors.green,),
@@ -175,12 +179,12 @@ class PostTile extends StatelessWidget {
                 child: Text(post['fact'] ?? "Content missing", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.fromLTRB(12,8,16,8),
                 child: Row(
                   children: [
                     Icon(Icons.mode_comment_outlined),
                     Container(width: 5,),
-                    Text("20"),
+                    Text(post["numComments"] ?? "0"),
                     Spacer(),
                     Icon(Icons.share_outlined,),
                     Container(width: 5,),

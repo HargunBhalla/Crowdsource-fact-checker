@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-
+import 'userConstants.dart';
 
 class NewPostForm extends StatefulWidget {
   const NewPostForm({Key? key}) : super(key: key);
@@ -14,73 +14,103 @@ class NewPostForm extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-
   @override
   State<NewPostForm> createState() => _NewPostFormState();
 }
 
 class _NewPostFormState extends State<NewPostForm> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final _formKey = GlobalKey<FormState>();
+  String fact = "";
+  String source = "";
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("New Fact"),
+        title: Text("New Fact Check"),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    elevation: 20,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextFormField(
+                        maxLines: 10,
+                        minLines: 5,
+                        decoration: new InputDecoration(hintText: "Enter a fact to check. E.g. Facebook post, Instagram post, Twitter thread, News article, etc."),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a fact to check';
+                          }
+                          setState(() {
+                            fact = value;
+                          });
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+              Card(
+                elevation: 20,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextFormField(
+                    maxLines: 2,
+                    minLines: 1,
+                    decoration: new InputDecoration(hintText: "Fact Source"),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter the source of your fact';
+                      }
+                      setState(() {
+                        source = value;
+                      });
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Validate returns true if the form is valid, or false otherwise.
+          if (_formKey.currentState!.validate()) {
+            // If the form is valid, display a snackbar. In the real world,
+            // you'd often call a server or save the information in a database.
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Processing Data')),
+            );
+            CollectionReference reference = FirebaseFirestore.instance
+                .collection('posts');
+            reference
+                .add({"fact": fact, "factSource": source, "username": UserConstants.username, "profilePicture": UserConstants.profilePicture});
+            Navigator.pop(this.context);
+          }
+        },
+        tooltip: 'Submit',
+        label: const Text('Submit'),
+        icon: const Icon(Icons.arrow_upward_rounded),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

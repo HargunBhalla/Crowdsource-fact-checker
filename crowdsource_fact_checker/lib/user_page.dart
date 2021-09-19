@@ -1,7 +1,12 @@
 import 'package:crowdsource_fact_checker/about_page.dart';
+import 'package:crowdsource_fact_checker/userConstants.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_page.dart';
 
 
+int numFacts = 0;
 
 class UserPage extends StatefulWidget {
   const UserPage({Key? key}) : super(key: key);
@@ -20,18 +25,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,41 +54,114 @@ class _UserPageState extends State<UserPage> {
           )
         ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: ListView(
+        children: [
+         Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0,30,0,20),
+                child: CircleAvatar(
+                  radius: 88.0,
+                  backgroundImage:
+                  NetworkImage(UserConstants.profilePicture),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              Text("Mikhail", style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),),
+              Text("McKale02", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),),
+              Container(height: 30,),
+              NumbersWidget(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32.0, 32, 16, 16),
+                    child: Text("Your Facts", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700,),),
+                  ),
+                ],
+              ),
+              StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection("posts").snapshots(),
+                  builder:(context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      numFacts = 0;
+                      return Container(
+                        child: Column(
+                            children: [
+                              ...snapshot.data!.docs.map((DocumentSnapshot document) {
+                                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                                if (data["username"] == UserConstants.username) {
+                                  print(document.id.toString());
+                                  numFacts += 1;
+                                  return PostTile(post: data);
+                                }else{
+                                  return Container();
+                                }
+                              }).toList(),
+                              Container(height: 100,)
+                            ]
+                        ),
+                      );
+                    }
+                  }
+              ),
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+        },
+        tooltip: 'New Fact',
+        icon: const Icon(Icons.edit),
+        label: Text("Edit"),
+      ), //
+    );
+  }
+}
+
+
+class NumbersWidget extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      buildButton(context, numFacts.toString(), 'Facts'),
+      buildDivider(),
+      buildButton(context, '35', 'Checks'),
+      buildDivider(),
+      buildButton(context, '12', 'References'),
+    ],
+  );
+  Widget buildDivider() => Container(
+    height: 24,
+    child: VerticalDivider(),
+  );
+
+  Widget buildButton(BuildContext context, String value, String text) =>
+      MaterialButton(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        onPressed: () {},
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
             Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            SizedBox(height: 2),
+            Text(
+              text,
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
+      );
 }

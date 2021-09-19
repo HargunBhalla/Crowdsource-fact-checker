@@ -1,38 +1,16 @@
+import 'package:crowdsource_fact_checker/userConstants.dart';
 import 'package:flutter/material.dart';
 
 
 
 class AboutPage extends StatefulWidget {
-  const AboutPage({Key? key, /*required this.title*/}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  //final String title;
+  const AboutPage({Key? key,}) : super(key: key);
 
   @override
   State<AboutPage> createState() => _AboutPageState();
 }
 
 class _AboutPageState extends State<AboutPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,41 +26,115 @@ class _AboutPageState extends State<AboutPage> {
         // the App.build method, and use it to set our appbar title.
         title: Text("About Page"),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: ListView(
+        children: [
+         Column(
+          mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(80,40,80,20),
+                child: Card(
+                  elevation: 20,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(800.0),
+                      child: Image.network("https://cdn.discordapp.com/attachments/888548685288448051/888961422149709824/Crowdcheck.png")),
+                ),
+              ),
+                Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 20, 20, 20),
+                child: Text(
+                  "Who We Are",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Row(
+                children: [
+                  Spacer(),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage:
+                        NetworkImage("https://media-exp1.licdn.com/dms/image/C4E03AQHVIlQzI7r7lA/profile-displayphoto-shrink_800_800/0/1629850333470?e=1637798400&v=beta&t=BNn6ZjGSFw5JHVlWmzr3ARBtUvhtyQn3z9amermMQjE"),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      Text(
+                        "Bradley",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage:
+                        NetworkImage("https://cdn.discordapp.com/attachments/888548685288448051/888974735948521542/headshot_hargunbhalla.jpg"),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      Text(
+                        "Hargun",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 50.0,
+                        backgroundImage:
+                        NetworkImage("https://media-exp1.licdn.com/dms/image/C5603AQGlpfGtB8E9iA/profile-displayphoto-shrink_800_800/0/1575766098378?e=1637798400&v=beta&t=5QAIOtr9X49wGTxzw3-v5eyrA682xZn67dAstdrg-YA"),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      Text(
+                        "Mikhail",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  "What We Do",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+                child: Text(
+                  "We here at crowdcheck have developed a crowdsourced fact-checking platform, where users receive credible and non-bias information about the issues they care most about. They also have the opportunity to submit information, submit comments to post thread, and build out their profile.",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  "Values",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+                child: Text(
+                  "Misinformation regarding science and other research based fields has been on the rise, given the upcoming Canadian Federal election and ongoing COVID-19 pandemic. We hope to solve this problem through crowdcheck, one post at a time.",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                ),
+              ),
+            ],
         ),
+          Container(height: 50,)
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

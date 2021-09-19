@@ -1,86 +1,260 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:url_launcher/url_launcher.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'userConstants.dart';
 
 class ViewThreadPage extends StatefulWidget {
-  const ViewThreadPage({Key? key}) : super(key: key);
+  final Map<String, dynamic> post;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  const ViewThreadPage ({ Key? key, required this.post }): super(key: key);
 
   @override
   State<ViewThreadPage> createState() => _ViewThreadPageState();
 }
 
 class _ViewThreadPageState extends State<ViewThreadPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text("Fact Check"),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: ListView(
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 8,8,0),
+              child: Text(
+                "Original Post",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+            PostTileView(post: this.widget.post,),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6.0, 0, 6, 6),
+              child: Card(
+                elevation: 20,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0,10,20,10),
+                  child: Row(
+                    children: [
+                      Text("Average Truth Score: " + (widget.post["rating"] ?? "-")+"/10", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                      Spacer(),
+                      (widget.post['rating'] == null) ?
+                      Icon(Icons.question_answer, color: Colors.grey,) :
+                      int.parse(widget.post['rating']) < 7 ?
+                      Icon(Icons.close, color: Colors.red,) :
+                      int.parse(widget.post['rating']) < 7 ?
+                      Icon(Icons.horizontal_rule_rounded, color: Colors.grey,) :
+                      //Icon(Icons.done_outline_rounded, color: Colors.green,),
+                      Icon(Icons.verified_outlined, color: Colors.green,),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 8,8,0),
+              child: Text(
+                "References",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6.0, 0, 6, 6),
+              child: Card(
+                  elevation: 20,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Column(
+                    children: [
+                      ...List.generate(widget.post["references"] == null ? 0 : widget.post["references"].length, (index) {
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(15.0),
+                          onTap: () {
+                            launch(widget.post["references"][index]["link"]);
+                          },
+                          child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0,8,8,0),
+                                child: Row(
+                                  children: [
+                                    Container(width: 5,),
+                                    Text(widget.post['references'][index]['title'] ?? "title missing", style: TextStyle(color: Color(0xff092b68), fontWeight: FontWeight.w500),),
+                                    Spacer(),
+                                  ],
+                                ),
+                              ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(12, 4, 8, 8),
+                              child: Container(
+                                color: Colors.grey,
+                                height: 1,
+                              ),
+                            )
+                          ],
+                        ),
+                        );
+                      }),
+                    ],
+                  )
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 8,8,0),
+              child: Text(
+                "Discussion",
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6.0, 0, 6, 6),
+              child: Card(
+                  elevation: 20,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                child: Column(
+                  children: [
+                    ...List.generate(widget.post["comments"] == null ? 0 : widget.post["comments"].length, (index) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 12.0,
+                                  backgroundImage:
+                                  NetworkImage(widget.post['comments'][index]['profilePicture']),
+                                  backgroundColor: Colors.transparent,
+                                ),
+                                Container(width: 5,),
+                                Text(widget.post['comments'][index]['username'] ?? "username missing"),
+                                Spacer(),
+                                Icon(Icons.reply_rounded),
+                                Container(width: 5,),
+                                Icon(Icons.keyboard_arrow_up),
+                                Text(widget.post['comments'][index]['votes'] ?? "0"),
+                                Icon(Icons.keyboard_arrow_down),
+
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+                            child: Text(widget.post['comments'][index]["comment"] ?? "Content missing", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 8, 12),
+                            child: Container(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          )
+                        ],
+                      );
+                    }),
+                  ],
+                )
+              ),
             ),
           ],
         ),
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: () {
+          print(widget.post['id']);
+          setState(() {
+            if (widget.post['comments'] != null) {
+              var list = widget.post['comments'];
+              var realList = list.toList();
+              realList.add({
+                "username": UserConstants.username,
+                "profilePicture": UserConstants.profilePicture,
+                "comment": "hello"
+              });
+              widget.post['comments'] = realList;
+            } else {
+              widget.post['comments'] = [{
+                "username": UserConstants.username,
+                "profilePicture": UserConstants.profilePicture,
+                "comment": "hello"
+              }];
+            }
+          });
+          FirebaseFirestore.instance.collection("posts").doc(widget.post['id']).update({"comments": widget.post['comments']});
+        },
+        tooltip: 'Comment',
+        child: const Icon(Icons.comment_rounded),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+
+class PostTileView extends StatelessWidget {
+  const PostTileView({
+    Key? key,
+    required this.post,
+  }) : super(key: key);
+
+  final Map<String, dynamic> post;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Card(
+        elevation: 20,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: InkWell (
+          borderRadius: BorderRadius.circular(15),
+          onTap: () {
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 12.0,
+                      backgroundImage:
+                      NetworkImage(post['profilePicture']),
+                      backgroundColor: Colors.transparent,
+                    ),
+                    Container(width: 5,),
+                    Text(post['username'] ?? "username missing"),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 15),
+                child: Text(post['fact'] ?? "Content missing", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8.0,8,16,8),
+                child: Row(
+                  children: [
+                    Spacer(),
+                    Text("Source: " + (post["source"] ?? "Unknown")),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
