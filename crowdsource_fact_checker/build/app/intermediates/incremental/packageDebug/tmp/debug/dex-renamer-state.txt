@@ -1,0 +1,4 @@
+#Sat Sep 18 12:02:32 EDT 2021
+base.0=/Users/mikhailszugalew/Documents/GitHub/Crowdsource-fact-checker/crowdsource_fact_checker/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

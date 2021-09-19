@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "966160158345",
+    "project_id": "htn-fact-checker",
+    "storage_bucket": "htn-fact-checker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966160158345:android:534334a747469e76f24058",
+        "android_client_info": {
+          "package_name": "com.htn.crowdsource_fact_checker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966160158345-cmb8fs5rjavu2ssi90o9seodl9mktgcm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlZG1p3bfwPLx9kSfo6-GMa1E2NOMoWBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966160158345-cmb8fs5rjavu2ssi90o9seodl9mktgcm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "966160158345-358brfqb466emni0hm0bhla07a3ip38f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.htn.crowdsourceFactChecker"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

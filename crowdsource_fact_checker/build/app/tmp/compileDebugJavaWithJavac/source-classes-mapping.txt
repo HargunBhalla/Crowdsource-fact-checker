@@ -1,0 +1,4 @@
+io/flutter/plugins/GeneratedPluginRegistrant.java
+ io.flutter.plugins.GeneratedPluginRegistrant
+com/htn/crowdsource_fact_checker/BuildConfig.java
+ com.htn.crowdsource_fact_checker.BuildConfig
