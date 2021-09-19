@@ -181,10 +181,13 @@ class _ViewThreadPageState extends State<ViewThreadPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
 
-          post['comments'] = await Navigator.push(
+          var tmp = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => WriteCommentPage(post: widget.post,)),
           );
+          if (tmp != null) {
+            post['comments'] = tmp;
+          }
           print(post['comments'].toString());
           setState(() {
             post = post;

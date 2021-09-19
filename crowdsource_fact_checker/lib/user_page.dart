@@ -69,8 +69,8 @@ class _UserPageState extends State<UserPage> {
                   backgroundColor: Colors.transparent,
                 ),
               ),
-              Text("Mikhail", style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),),
-              Text("McKale02", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),),
+              Text(UserConstants.username, style: TextStyle(fontSize: 36, fontWeight: FontWeight.w600),),
+              Text(UserConstants.usercode, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),),
               Container(height: 30,),
               NumbersWidget(),
               Row(

@@ -56,6 +56,45 @@ class _WriteCommentPageState extends State<WriteCommentPage> {
                       ),
                     ),
                   ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Truth Rating ?/10:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 80,
+                          child: TextFormField(
+                            maxLines: 1,
+                            decoration: new InputDecoration(hintText: "Ex. 5"),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return null;
+                              }
+                              if (double.tryParse(value) == null) {
+                                return 'Enter number';
+                              }
+                              var num = double.parse(value);
+                              if (num > 10 || num < 0) {
+                                return "Outside range";
+                              }
+                              setState(() {
+
+                              });
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text('References',
